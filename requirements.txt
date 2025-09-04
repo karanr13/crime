@@ -1,12 +1,8 @@
 streamlit
-scikit-learn
-numpy
 pandas
+numpy
 matplotlib
-statsmodels
 seaborn
 plotly
-prophet
-wordcloud
-requests
-json
+scikit-learn
+pyarrow
