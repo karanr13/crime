@@ -18,7 +18,7 @@ import base64
 import streamlit as st
 
 # Path to your horror background image
-file_path = r"E:\python\horror.webp"   # use raw string (r"...") to avoid \ issues
+file_path = "horror.webp"   # use raw string (r"...") to avoid \ issues
 
 # Read and encode the image
 with open(file_path, "rb") as f:
@@ -186,3 +186,4 @@ if df is not None:
             st.write("#### 🌟 Feature Importance")
             importance = pd.DataFrame({"Feature": X.columns,"Importance": model.feature_importances_}).sort_values("Importance", ascending=False)
             st.bar_chart(importance.set_index("Feature"))
+
