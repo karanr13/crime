@@ -11,21 +11,17 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix
-
-# ------------------ ANIMATED BACKGROUND ------------------
-# ------------------ HORROR BACKGROUND CSS ------------------
 import base64
-import streamlit as st
 
-# Path to your horror background image
-file_path = "horror.webp"   # use raw string (r"...") to avoid \ issues
+# ------------------ HORROR BACKGROUND CSS ------------------
+file_path = "horror.webp"   # Background image
 
 # Read and encode the image
 with open(file_path, "rb") as f:
     img_bytes = f.read()
 encoded = base64.b64encode(img_bytes).decode()
 
-# CSS with background
+# CSS with horror theme
 horror_bg = f"""
 <style>
 .stApp {{
@@ -58,13 +54,7 @@ h1, h2, h3, h4 {{
 }}
 </style>
 """
-
-# Inject CSS
 st.markdown(horror_bg, unsafe_allow_html=True)
-
-
-
-
 
 # ------------------ LOAD DATA -----------------
 @st.cache_data
@@ -168,20 +158,28 @@ if df is not None:
             kernel_type = st.selectbox("Select Kernel", ["linear", "rbf", "poly"])
             model = SVC(kernel=kernel_type, random_state=42)
 
+        # Train and predict
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
 
         st.write(f"### Results for {model_name}")
-        st.write("#### 📊 Classification Report")
-        st.text(classification_report(y_test, y_pred))
 
+        # 📊 Classification Report
+        report = classification_report(y_test, y_pred, output_dict=True)
+        report_df = pd.DataFrame(report).transpose()
+
+        st.write("#### 📊 Classification Report")
+        st.dataframe(report_df.style.set_properties(**{'color': 'black', 'background-color': 'white'}))
+
+        # 🔲 Confusion Matrix
         st.write("#### 🔲 Confusion Matrix")
         fig_cm, ax_cm = plt.subplots()
-        sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt="d", cmap="Blues", ax=ax_cm)
-        ax_cm.set_xlabel("Predicted")
-        ax_cm.set_ylabel("Actual")
+        sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt="d", cmap="Reds", ax=ax_cm)
+        ax_cm.set_xlabel("Predicted", color="gold")
+        ax_cm.set_ylabel("Actual", color="gold")
         st.pyplot(fig_cm)
 
+        # 🌟 Feature Importance for RF
         if model_name == "Random Forest":
             st.write("#### 🌟 Feature Importance")
             importance = pd.DataFrame({"Feature": X.columns,"Importance": model.feature_importances_}).sort_values("Importance", ascending=False)
